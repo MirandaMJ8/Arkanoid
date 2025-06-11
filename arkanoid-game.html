@@ -1,5 +1,4 @@
 
-
 <title>ARKANOID</title>
 <style>
     body {
@@ -12,10 +11,21 @@ canvas {
     background: url('./bkg.png') repeat;
     margin: 0 auto;
     display: block;
+    margin-top: 10%;
+}
+#scores {
+    color: #fff;
+    font-family: Arial, sans-serif;
 }
 </style>
 
 <canvas></canvas>
+
+<div id="scores">
+    <span id="score"></span>
+    <br>
+    <span id="HighScore"></span>
+</div>
 
 <img hidden id="sprite" src="./sprite.png" alt="Sprite Arkanoid" />
 <img hidden id="bricks" src="./bricks.png" alt="Sprite Bricks Arkanoid" />
@@ -32,6 +42,12 @@ canvas {
 
     /* variables del juego */
     let counter = 0;
+
+    // Puntuación 
+    let score = 0;
+    // Guardar la puntuación más alta en el localStorage
+    let HighScore = localStorage.getItem('highScore_arkanoid') || 0;
+
 
     /* variables de pelota */
     const ballRadius = 4;
@@ -153,6 +169,7 @@ canvas {
                 if (isBallSameXAsBrick && isBallSameYAsBrick) {
                     dy = -dy
                     currentBrick.status = BRICK_STATUS.DESTROYED
+                    score += 5
                 }
             }
         }
@@ -209,17 +226,17 @@ canvas {
         document.addEventListener('keyup', keyUpHandler)
 
         function keyDownHandler (event) {
-            if (event.key === 'Right' || event.key === 'ArrowRight') {
+            if (event.key === 'Right' || event.key === 'ArrowRight' || event.key === 'd' || event.key === 'D') {
                 rightPressed = true
-            } else if (event.key === 'Left' || event.key === 'ArrowLeft') {
+            } else if (event.key === 'Left' || event.key === 'ArrowLeft' || event.key === 'a' || event.key === 'A') {
                 leftPressed = true
             }
         }
 
         function keyUpHandler (event) {
-            if (event.key === 'Right' || event.key === 'ArrowRight') {
+            if (event.key === 'Right' || event.key === 'ArrowRight' || event.key === 'd' || event.key === 'D') {
                 rightPressed = false
-            } else if (event.key === 'Left' || event.key === 'ArrowLeft') {
+            } else if (event.key === 'Left' || event.key === 'ArrowLeft' || event.key === 'a' || event.key === 'A') {
                 leftPressed = false
             }
         }
@@ -237,6 +254,14 @@ canvas {
         collisionDetection()
         ballMovement()
         paddleMovement()
+
+        // Actualizar puntuación y highscore en pantalla
+        document.getElementById('score').innerText = `Puntuacion ${score}`
+        document.getElementById('HighScore').innerText = `Puntuación más alta: ${HighScore}`
+        if (score > HighScore) {
+            HighScore = score
+            localStorage.setItem('highScore_arkanoid', HighScore)
+        }
 
         window.requestAnimationFrame(draw)
     }
